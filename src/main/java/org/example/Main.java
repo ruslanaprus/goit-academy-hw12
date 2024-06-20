@@ -1,14 +1,14 @@
 package org.example;
 
-import org.example.timer.CollectionController;
-import org.example.timer.FileController;
-import org.example.timer.TimerController;
+import org.example.timer.CollectionDataHandler;
+import org.example.timer.FileDataHandler;
+import org.example.timer.SchedulerController;
 
 public class Main {
     public static void main(String[] args) {
-        TimerController controller = new TimerController(new CollectionController());
-        controller.start();
-        TimerController controller2 = new TimerController(new FileController());
-        controller2.start();
+        SchedulerController dataIntoList = new SchedulerController(new CollectionDataHandler());
+        dataIntoList.start();
+        SchedulerController dataIntoFile = new SchedulerController(new FileDataHandler());
+        dataIntoFile.start();
     }
 }

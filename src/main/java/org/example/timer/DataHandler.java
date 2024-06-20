@@ -1,6 +1,6 @@
 package org.example.timer;
 
-public interface DataController {
+public interface DataHandler {
     void writeData(String data);
 
     void readData();

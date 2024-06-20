@@ -6,7 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
-public class FileController implements DataController{
+public class FileDataHandler implements DataHandler {
     private static final String FILE_PATH = "src/main/resources/output.txt";
 
     @Override

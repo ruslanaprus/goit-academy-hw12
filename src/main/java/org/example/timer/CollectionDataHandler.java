@@ -3,7 +3,7 @@ package org.example.timer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CollectionController implements DataController {
+public class CollectionDataHandler implements DataHandler {
     private static final List<String> dataList = new ArrayList<>();
 
     @Override
