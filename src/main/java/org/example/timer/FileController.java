@@ -6,10 +6,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
-public class FileController {
+public class FileController implements DataController{
     private static final String FILE_PATH = "src/main/resources/output.txt";
 
-    public static synchronized void writeToFile(String message) {
+    @Override
+    public synchronized void writeData(String message) {
         try {
             Files.write(Path.of(FILE_PATH), (message + System.lineSeparator()).getBytes(StandardCharsets.UTF_8),
                     StandardOpenOption.CREATE, StandardOpenOption.APPEND);
@@ -18,7 +19,8 @@ public class FileController {
         }
     }
 
-    public static void printFileContents() {
+    @Override
+    public void readData() {
         try {
             Files.lines(Path.of(FILE_PATH), StandardCharsets.UTF_8).forEach(System.out::println);
         } catch (IOException e) {
@@ -26,7 +28,7 @@ public class FileController {
         }
     }
 
-    public static void clearFileContents() {
+    public static void clearData() {
         try {
             Files.write(Path.of(FILE_PATH), new byte[0], StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
