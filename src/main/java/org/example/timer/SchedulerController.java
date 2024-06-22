@@ -10,7 +10,11 @@ public class SchedulerController {
     private final DataHandler dataHandler;
 
     public SchedulerController(DataHandler dataHandler) {
-        scheduler = Executors.newScheduledThreadPool(2);
+        this(dataHandler, Executors.newScheduledThreadPool(2));
+    }
+
+    public SchedulerController(DataHandler dataHandler, ScheduledExecutorService scheduler) {
+        this.scheduler = scheduler;
         this.dataHandler = dataHandler;
     }
 

@@ -20,4 +20,8 @@ public class CollectionDataHandler implements DataHandler {
             dataList.forEach(System.out::println);
         }
     }
+
+    public static List<String> getDataList() {
+        return List.copyOf(dataList);
+    }
 }
