@@ -20,7 +20,7 @@ public class SchedulerController {
 
     public void start() {
         if (dataHandler instanceof FileDataHandler) {
-            FileDataHandler.clearData();
+            ((FileDataHandler) dataHandler).clearData();
         }
 
         scheduler.scheduleAtFixedRate(() -> dataHandler.writeData(Timer.getTimeTask()), 0, 1000, TimeUnit.MILLISECONDS);

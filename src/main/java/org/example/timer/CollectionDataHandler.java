@@ -22,6 +22,8 @@ public class CollectionDataHandler implements DataHandler {
     }
 
     public static List<String> getDataList() {
-        return List.copyOf(dataList);
+        synchronized (dataList) {
+            return List.copyOf(dataList);
+        }
     }
 }

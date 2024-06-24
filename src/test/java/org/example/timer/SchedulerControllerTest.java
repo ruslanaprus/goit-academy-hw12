@@ -147,7 +147,7 @@ public class SchedulerControllerTest {
         }
 
         @Override
-        public void readData() {
+        public synchronized void readData() {
             try {
                 Files.lines(Path.of(testFilePath), StandardCharsets.UTF_8).forEach(System.out::println);
             } catch (IOException e) {
