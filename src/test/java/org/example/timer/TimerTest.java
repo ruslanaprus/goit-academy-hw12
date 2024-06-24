@@ -35,6 +35,7 @@ public class TimerTest {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
 
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
         System.setOut(new PrintStream(outContent));
 
         Runnable timeTask = () -> {
@@ -48,15 +49,19 @@ public class TimerTest {
         scheduler.scheduleAtFixedRate(timeTask, 0, 1000, TimeUnit.MILLISECONDS);
         scheduler.scheduleAtFixedRate(messageTask, 5000, 5000, TimeUnit.MILLISECONDS);
 
-        Awaitility.await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
+        Awaitility.await().atMost(Duration.ofSeconds(16)).untilAsserted(() -> {
             String output = outContent.toString();
             assertTrue(output.contains("5 seconds have passed"));
-            assertTrue(output.lines().filter(line -> line.matches("\\d{2}:\\d{2}:\\d{2}")).count() >= 5);
+            assertTrue(output.lines().filter(line -> line.matches("\\d{2}:\\d{2}:\\d{2}")).count() >= 16);
         });
+
+        System.setOut(originalOut);
+        String output = outContent.toString();
+        System.out.println(output);
 
         scheduler.shutdown();
         try {
-            if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
+            if (!scheduler.awaitTermination(5000, TimeUnit.MILLISECONDS)) {
                 scheduler.shutdownNow();
             }
         } catch (InterruptedException e) {
