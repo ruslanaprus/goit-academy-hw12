@@ -8,6 +8,8 @@ import java.nio.charset.StandardCharsets;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -131,27 +133,35 @@ public class SchedulerControllerTest {
 
     private static class TestFileDataHandler extends FileDataHandler {
         private final String testFilePath;
+        private final ReadWriteLock lock = new ReentrantReadWriteLock();
+
 
         public TestFileDataHandler(String testFilePath) {
             this.testFilePath = testFilePath;
         }
 
         @Override
-        public synchronized void writeData(String message) {
+        public void writeData(String message) {
+            lock.writeLock().lock();
             try {
                 Files.write(Path.of(testFilePath), (message + System.lineSeparator()).getBytes(StandardCharsets.UTF_8),
                         StandardOpenOption.CREATE, StandardOpenOption.APPEND);
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                lock.writeLock().unlock();
             }
         }
 
         @Override
-        public synchronized void readData() {
+        public void readData() {
+            lock.readLock().lock();
             try {
                 Files.lines(Path.of(testFilePath), StandardCharsets.UTF_8).forEach(System.out::println);
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                lock.readLock().unlock();
             }
         }
     }
