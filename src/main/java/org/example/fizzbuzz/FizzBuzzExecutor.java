@@ -2,6 +2,7 @@ package org.example.fizzbuzz;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -13,21 +14,23 @@ public class FizzBuzzExecutor {
         this.fizzBuzzManager = fizzBuzzManager;
     }
 
-    private List<String> collectOutput() {
-        List<String> outputList = new ArrayList<>();
-        while (true) {
-            try {
+    public List<String> collectOutput() throws InterruptedException {
+        List<String> outputList = new CopyOnWriteArrayList<>();
+
+        try {
+            while (!Thread.currentThread().isInterrupted()) {
                 String output = fizzBuzzManager.getOutputQueue().poll(1, TimeUnit.SECONDS);
                 if (output != null) {
                     outputList.add(output);
+                } else {
+                    if (fizzBuzzManager.getCurrent().get() > fizzBuzzManager.getN() && fizzBuzzManager.getOutputQueue().isEmpty()) {
+                        break;
+                    }
                 }
-                if (fizzBuzzManager.getCurrent().get() > fizzBuzzManager.getN()
-                        && fizzBuzzManager.getOutputQueue().isEmpty()) {
-                    break;
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw e;
         }
         return List.copyOf(outputList);
     }
@@ -48,11 +51,5 @@ public class FizzBuzzExecutor {
         } catch (InterruptedException e) {
             executor.shutdownNow();
         }
-        System.out.println(collectOutput());
-    }
-
-    public static void main(String[] args) {
-        FizzBuzzExecutor fizzBuzzExecutor = new FizzBuzzExecutor(new FizzBuzzManager(100));
-        fizzBuzzExecutor.start();
     }
 }
