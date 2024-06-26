@@ -27,15 +27,18 @@ public class FizzBuzzManager {
         @Override
         public void run() {
             while (true) {
-                int num = current.get();
-                if (num > n) return;
-                if ((isFizzBuzzTask && num % 3 == 0 && num % 5 == 0) ||
-                        (!isFizzBuzzTask && num % divisor == 0 && num % (divisor == 3 ? 5 : 3) != 0)) {
-                    try {
-                        outputQueue.put(output.equals(String.valueOf(num)) ? String.valueOf(num) : output);
-                        current.incrementAndGet();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
+                int num;
+                synchronized (current) {
+                    num = current.get();
+                    if (num > n) return;
+                    if ((isFizzBuzzTask && num % 3 == 0 && num % 5 == 0) ||
+                            (!isFizzBuzzTask && num % divisor == 0 && num % (divisor == 3 ? 5 : 3) != 0)) {
+                        try {
+                            outputQueue.put(output.equals(String.valueOf(num)) ? String.valueOf(num) : output);
+                            current.incrementAndGet();
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
                     }
                 }
             }
@@ -68,14 +71,17 @@ public class FizzBuzzManager {
         @Override
         public void run() {
             while (true) {
-                int num = current.get();
-                if (num > n) return;
-                if (num % 3 != 0 && num % 5 != 0) {
-                    try {
-                        outputQueue.put(String.valueOf(num));
-                        current.incrementAndGet();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
+                int num;
+                synchronized (current) {
+                    num = current.get();
+                    if (num > n) return;
+                    if (num % 3 != 0 && num % 5 != 0) {
+                        try {
+                            outputQueue.put(String.valueOf(num));
+                            current.incrementAndGet();
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
                     }
                 }
             }
