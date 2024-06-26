@@ -8,10 +8,18 @@ import java.nio.file.StandardOpenOption;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+/**
+ * The {@code FileDataHandler} class implements the {@code DataHandler} interface to handle data using a file.
+ */
 public class FileDataHandler implements DataHandler {
     private static final String FILE_PATH = "src/main/resources/output.txt";
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
+    /**
+     * Writes the specified data to the file.
+     *
+     * @param message the data to be written
+     */
     @Override
     public void writeData(String message) {
         lock.writeLock().lock();
@@ -25,6 +33,9 @@ public class FileDataHandler implements DataHandler {
         }
     }
 
+    /**
+     * Reads the data from the file and prints it to the console.
+     */
     @Override
     public void readData() {
         lock.readLock().lock();
@@ -37,6 +48,9 @@ public class FileDataHandler implements DataHandler {
         }
     }
 
+    /**
+     * Clears the data in the file.
+     */
     public void clearData() {
         lock.writeLock().lock();
         try {
