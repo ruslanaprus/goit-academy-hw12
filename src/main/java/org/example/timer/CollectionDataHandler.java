@@ -9,9 +9,29 @@ import java.util.List;
  */
 public class CollectionDataHandler implements DataHandler {
     private static final List<String> dataList = new ArrayList<>();
+    private boolean realTimeConsoleOutput;
 
     /**
-     * Writes the specified data to the in-memory collection.
+     * Constructs a new {@code CollectionDataHandler} with the option to enable real-time console output.
+     *
+     * @param realTimeConsoleOutput true to enable real-time console output; false otherwise
+     */
+    public CollectionDataHandler(boolean realTimeConsoleOutput) {
+        this.realTimeConsoleOutput = realTimeConsoleOutput;
+    }
+
+    /**
+     * Enables or disables real-time console output.
+     *
+     * @param enable true to enable; false to disable
+     */
+    @Override
+    public void enableRealTimeConsoleOutput(boolean enable) {
+        this.realTimeConsoleOutput = enable;
+    }
+
+    /**
+     * Writes the specified data to the in-memory collection and optionally prints it to the console.
      *
      * @param data the data to be written
      */
@@ -19,6 +39,9 @@ public class CollectionDataHandler implements DataHandler {
     public void writeData(String data) {
         synchronized (dataList) {
             dataList.add(data);
+            if (realTimeConsoleOutput) {
+                System.out.println(data);
+            }
         }
     }
 

@@ -14,9 +14,29 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class FileDataHandler implements DataHandler {
     private static final String FILE_PATH = "src/main/resources/output.txt";
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
+    private boolean realTimeConsoleOutput;
 
     /**
-     * Writes the specified data to the file.
+     * Constructs a new {@code FileDataHandler} with the option to enable real-time console output.
+     *
+     * @param realTimeConsoleOutput true to enable real-time console output; false otherwise
+     */
+    public FileDataHandler(boolean realTimeConsoleOutput) {
+        this.realTimeConsoleOutput = realTimeConsoleOutput;
+    }
+
+    /**
+     * Enables or disables real-time console output.
+     *
+     * @param enable true to enable; false to disable
+     */
+    @Override
+    public void enableRealTimeConsoleOutput(boolean enable) {
+        this.realTimeConsoleOutput = enable;
+    }
+
+    /**
+     * Writes the specified data to the file and optionally prints it to the console.
      *
      * @param message the data to be written
      */
@@ -26,6 +46,9 @@ public class FileDataHandler implements DataHandler {
         try {
             Files.write(Path.of(FILE_PATH), (message + System.lineSeparator()).getBytes(StandardCharsets.UTF_8),
                     StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            if (realTimeConsoleOutput) {
+                System.out.println(message);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

@@ -15,4 +15,11 @@ public interface DataHandler {
      * Reads the data.
      */
     void readData();
+
+    /**
+     * Enables or disables real-time console output.
+     *
+     * @param enable true to enable real-time console output; false to disable
+     */
+    void enableRealTimeConsoleOutput(boolean enable);
 }

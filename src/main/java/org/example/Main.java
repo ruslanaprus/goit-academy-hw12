@@ -9,9 +9,9 @@ import org.example.timer.SchedulerController;
  */
 public class Main {
     public static void main(String[] args) {
-        SchedulerController dataIntoList = new SchedulerController(new CollectionDataHandler());
+        SchedulerController dataIntoList = new SchedulerController(new CollectionDataHandler(true));
         dataIntoList.start();
-        SchedulerController dataIntoFile = new SchedulerController(new FileDataHandler());
+        SchedulerController dataIntoFile = new SchedulerController(new FileDataHandler(false));
         dataIntoFile.start();
     }
 }
