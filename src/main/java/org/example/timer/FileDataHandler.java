@@ -36,6 +36,15 @@ public class FileDataHandler implements DataHandler {
     }
 
     /**
+     * Checks if real-time console output is enabled.
+     *
+     * @return true if real-time console output is enabled; false otherwise
+     */
+    public boolean isRealTimeConsoleOutput() {
+        return realTimeConsoleOutput;
+    }
+
+    /**
      * Writes the specified data to the file and optionally prints it to the console.
      *
      * @param message the data to be written
