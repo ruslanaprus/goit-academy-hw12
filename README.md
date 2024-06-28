@@ -26,12 +26,14 @@ Designed with extensibility in mind, the project supports various data storage m
 #### Methods
 - `writeData(String data)`: Writes the specified data.
 - `readData()`: Reads the data.
+- `enableRealTimeConsoleOutput(boolean enable)`: Enables or disables real-time console output.
 
 ### `CollectionDataHandler` class
 - Implements `DataHandler` using an in-memory collection (`List`).
 
 #### Methods
 - `writeData(String data)`: Writes the specified data to the in-memory collection.
+- `enableRealTimeConsoleOutput(boolean enable)`: Enables or disables real-time console output of data written in the collection.
 - `readData()`: Reads the data from the in-memory collection.
 - `getDataList()`: Returns an unmodifiable copy of the data list.
 
@@ -39,6 +41,8 @@ Designed with extensibility in mind, the project supports various data storage m
 - Implements `DataHandler` using a file for data storage.
 
 #### Methods
+- `enableRealTimeConsoleOutput(boolean enable)`: Enables or disables real-time console output of data written in the file.
+- `isRealTimeConsoleOutput()`: Checks if real-time console output is enabled.
 - `writeData(String message)`: Writes the specified data to a file.
 - `readData()`: Reads the data from the file.
 - `clearData()`: Clears the data in the file.
@@ -49,6 +53,7 @@ Designed with extensibility in mind, the project supports various data storage m
 #### Methods
 - `start()`: Starts the scheduler to write data at regular intervals.
 - `shutdown()`: Initiates shutdown of the scheduler and reads data.
+- `readData()`: Reads data using the data handler.
 
 ## Project Structure and Extensibility
 The project is designed with a clear separation of concerns, using interfaces and implementations to handle data storage. The `DataHandler` interface defines the contract for writing and reading data, while the `CollectionDataHandler` and `FileDataHandler` classes provide specific implementations of this interface.
@@ -79,12 +84,18 @@ public class DatabaseDataHandler implements DataHandler {
 Start the time scheduler and write data to either an in-memory collection or a file.
 
 ```java
-        // Example using CollectionDataHandler
-        SchedulerController dataIntoList = new SchedulerController(new CollectionDataHandler());
+        // Example using CollectionDataHandler with enabled real-time console output
+        SchedulerController dataIntoList = new SchedulerController(new CollectionDataHandler(true));
         dataIntoList.start();
 
-        // Example using FileDataHandler
-        SchedulerController dataIntoFile = new SchedulerController(new FileDataHandler());
+        System.out.println("Press Enter to read data and exit...");
+        new Scanner(System.in).nextLine();
+
+        dataIntoList.readData();
+        dataIntoList.shutdown();
+
+        // Example using FileDataHandler with disabled real-time console output
+        SchedulerController dataIntoFile = new SchedulerController(new FileDataHandler(false));
         dataIntoFile.start();
 ```
 ### Example Output
