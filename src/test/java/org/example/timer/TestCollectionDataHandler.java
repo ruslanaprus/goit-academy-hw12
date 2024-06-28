@@ -5,11 +5,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Method;
+import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,7 +20,7 @@ public class TestCollectionDataHandler {
 
     @BeforeEach
     public void setUp() {
-        dataHandler = new CollectionDataHandler();
+        dataHandler = new CollectionDataHandler(true);
         scheduler = Executors.newScheduledThreadPool(2);
         schedulerController = new SchedulerController(dataHandler, scheduler);
         schedulerController.start();
@@ -29,9 +28,8 @@ public class TestCollectionDataHandler {
 
     @AfterEach
     public void tearDown() {
-        invokePrivateShutdown();
+        schedulerController.shutdown();
     }
-
 
     @Test
     public void testSchedulerWritesTimeTask() {
@@ -69,7 +67,7 @@ public class TestCollectionDataHandler {
 
     @Test
     public void testShutdown() {
-        invokePrivateShutdown();
+        schedulerController.shutdown();
 
         assertTrue(scheduler.isShutdown(), "Scheduler should be shut down");
 
@@ -78,15 +76,5 @@ public class TestCollectionDataHandler {
                     List<String> dataList = CollectionDataHandler.getDataList();
                     assertNotNull(dataList, "Data list should not be null");
                 });
-    }
-
-    private void invokePrivateShutdown() {
-        try {
-            Method shutdownMethod = SchedulerController.class.getDeclaredMethod("shutdown");
-            shutdownMethod.setAccessible(true);
-            shutdownMethod.invoke(schedulerController);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to invoke shutdown method", e);
-        }
     }
 }

@@ -2,7 +2,6 @@ package org.example.timer;
 
 import org.junit.jupiter.api.*;
 
-import java.lang.reflect.Method;
 import java.nio.file.*;
 import java.nio.charset.StandardCharsets;
 import java.io.IOException;
@@ -33,7 +32,7 @@ public class SchedulerControllerTest {
 
     @Test
     public void testStart_WithCollectionDataHandler() throws InterruptedException {
-        CollectionDataHandler collectionDataHandler = new CollectionDataHandler();
+        CollectionDataHandler collectionDataHandler = new CollectionDataHandler(true);
         SchedulerController schedulerController = new SchedulerController(collectionDataHandler, testScheduler);
 
         schedulerController.start();
@@ -46,21 +45,14 @@ public class SchedulerControllerTest {
         System.out.println("Data written to CollectionDataHandler:");
         dataList.forEach(System.out::println);
 
-        try {
-            Method shutdownMethod = SchedulerController.class.getDeclaredMethod("shutdown");
-            shutdownMethod.setAccessible(true);
-            shutdownMethod.invoke(schedulerController);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail("Failed to invoke shutdown method via reflection");
-        }
+        schedulerController.shutdown();
     }
 
     @Test
     public void testStart_WithFileDataHandler() throws IOException, InterruptedException {
         Files.write(Path.of(TEST_OUTPUT_FILE), new byte[0], StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
 
-        FileDataHandler fileDataHandler = new TestFileDataHandler(TEST_OUTPUT_FILE);
+        FileDataHandler fileDataHandler = new TestFileDataHandler(TEST_OUTPUT_FILE, false);
         SchedulerController schedulerController = new SchedulerController(fileDataHandler, testScheduler);
 
         schedulerController.start();
@@ -73,31 +65,17 @@ public class SchedulerControllerTest {
         System.out.println("Data written to file:");
         lines.forEach(System.out::println);
 
-        try {
-            Method shutdownMethod = SchedulerController.class.getDeclaredMethod("shutdown");
-            shutdownMethod.setAccessible(true);
-            shutdownMethod.invoke(schedulerController);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail("Failed to invoke shutdown method via reflection");
-        }
+        schedulerController.shutdown();
     }
 
     @Test
     public void testShutdown() throws InterruptedException {
-        CollectionDataHandler collectionDataHandler = new CollectionDataHandler();
+        CollectionDataHandler collectionDataHandler = new CollectionDataHandler(true);
         SchedulerController schedulerController = new SchedulerController(collectionDataHandler, testScheduler);
 
         schedulerController.start();
 
-        try {
-            Method shutdownMethod = SchedulerController.class.getDeclaredMethod("shutdown");
-            shutdownMethod.setAccessible(true);
-            shutdownMethod.invoke(schedulerController);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail("Failed to invoke shutdown method via reflection");
-        }
+        schedulerController.shutdown();
 
         assertTrue(testScheduler.isShutdown());
 
@@ -108,21 +86,14 @@ public class SchedulerControllerTest {
 
     @Test
     public void testShutdown_Forcing() throws InterruptedException {
-        CollectionDataHandler collectionDataHandler = new CollectionDataHandler();
+        CollectionDataHandler collectionDataHandler = new CollectionDataHandler(true);
         SchedulerController schedulerController = new SchedulerController(collectionDataHandler, testScheduler);
 
         schedulerController.start();
 
         testScheduler.awaitTermination(1, TimeUnit.SECONDS);
 
-        try {
-            Method shutdownMethod = SchedulerController.class.getDeclaredMethod("shutdown");
-            shutdownMethod.setAccessible(true);
-            shutdownMethod.invoke(schedulerController);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail("Failed to invoke shutdown method via reflection");
-        }
+        schedulerController.shutdown();
 
         assertTrue(testScheduler.isShutdown());
 
@@ -135,8 +106,8 @@ public class SchedulerControllerTest {
         private final String testFilePath;
         private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
-
-        public TestFileDataHandler(String testFilePath) {
+        public TestFileDataHandler(String testFilePath, boolean realTimeConsoleOutput) {
+            super(realTimeConsoleOutput);
             this.testFilePath = testFilePath;
         }
 
@@ -146,6 +117,9 @@ public class SchedulerControllerTest {
             try {
                 Files.write(Path.of(testFilePath), (message + System.lineSeparator()).getBytes(StandardCharsets.UTF_8),
                         StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                if (isRealTimeConsoleOutput()) {
+                    System.out.println(message);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
