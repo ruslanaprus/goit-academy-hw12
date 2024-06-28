@@ -46,9 +46,8 @@ public class SchedulerController {
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
     }
 
-    private void shutdown() {
+    public void shutdown() {
         System.out.println("Shutdown initiated...");
-        dataHandler.readData();
         scheduler.shutdown();
         try {
             if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
@@ -59,5 +58,12 @@ public class SchedulerController {
             scheduler.shutdownNow();
         }
         System.out.println("Scheduler terminated.");
+    }
+
+    /**
+     * Reads data using the data handler.
+     */
+    public void readData() {
+        dataHandler.readData();
     }
 }
