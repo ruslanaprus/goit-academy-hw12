@@ -46,6 +46,13 @@ public class SchedulerController {
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
     }
 
+    /**
+     * Shuts down the scheduler, attempting to stop all actively executing tasks, halting the processing of waiting tasks,
+     * and returning a list of the tasks that were awaiting execution.
+     * <p>
+     * This method initiates an orderly shutdown in which previously submitted tasks are executed, but no new tasks will be accepted.
+     * If the scheduler does not terminate within the specified timeout, it will be forcibly shut down.
+     */
     public void shutdown() {
         System.out.println("Shutdown initiated...");
         scheduler.shutdown();

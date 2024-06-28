@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"org.example"},{"l":"org.example.fizzbuzz"},{"l":"org.example.timer"}];updateSearchResults();
